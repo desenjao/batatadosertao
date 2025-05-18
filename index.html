@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Batata do Sertão</title>
+  <!-- Adicionando Lucide Icons via CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #1C2526;
+      color: #E0E0E0;
+      font-family: 'Roboto', Arial, sans-serif;
+      text-align: center;
+      transition: all 0.4s ease;
+    }
+    body.light-mode {
+      background-color: #F5F5F5;
+      color: #333;
+    }
+    .container {
+      padding: 30px 15px;
+    }
+    .profile-image img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 4px solid #d4a017;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      margin: 20px 0;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin: 15px 0;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+      color: #F5E050;
+    }
+    p {
+      font-size: 1.1rem;
+      margin: 5px 0;
+    }
+    .highlight {
+      color: #28A745;
+      font-weight: bold;
+    }
+    body.light-mode .highlight {
+      color: #218838;
+    }
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .buttons a {
+      display: flex;
+      align-items: center;
+      width: 90%;
+      max-width: 320px;
+      margin: 15px auto;
+      padding: 14px;
+      background-color: #333;
+      color: #FFF;
+      text-decoration: none;
+      border-radius: 8px;
+      border: 1px solid #d4a017;
+      font-size: 1.1em;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    .buttons a:hover, .buttons a:focus {
+      background-color: #444;
+      transform: scale(1.02);
+      outline: 2px solid #d4a017;
+    }
+    .buttons a:active {
+      background-color: #555;
+    }
+    .buttons a .emoji-box {
+      width: 40px;
+      height: 40px;
+      background-color: #d4a017;
+      border-radius: 5px 0 0 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2em;
+      flex-shrink: 0;
+    }
+    .buttons a .text {
+      flex-grow: 1;
+      text-align: center;
+      padding: 0 10px;
+    }
+    .location-map {
+      margin: 20px auto;
+      max-width: 400px;
+      border: 2px solid #d4a017;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .location-map iframe {
+      width: 100%;
+      height: 300px;
+      border: 0;
+      display: block;
+    }
+    .location-address {
+      font-size: 1rem;
+      margin: 10px 0;
+    }
+    .toggle-container {
+      margin-top: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "🌙";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    input:checked + .slider {
+      background-color: #d4a017;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+      content: "☀️";
+    }
+    body.light-mode .buttons a {
+      background-color: #E0E0E0;
+      color: #333;
+    }
+    body.light-mode .buttons a:hover, body.light-mode .buttons a:focus {
+      background-color: #D0D0D0;
+    }
+    body.light-mode .location-map {
+      border-color: #d4a017;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .modal.show {
+      opacity: 1;
+    }
+    .modal-content {
+      background-color: rgba(28, 37, 38, 0.95);
+      padding: 25px;
+      border-radius: 15px;
+      text-align: left;
+      max-width: 400px;
+      color: #E0E0E0;
+      border: 2px solid #d4a017;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      transform: scale(0.9);
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      opacity: 0;
+    }
+    .modal-content.show {
+      transform: scale(1);
+      opacity: 1;
+    }
+    body.light-mode .modal-content {
+      background-color: rgba(245, 245, 245, 0.95);
+      color: #333;
+    }
+    .modal-content h2 {
+      margin: 0 0 20px;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #F5E050;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    .modal-content .info-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 15px 0;
+      font-size: 1.1rem;
+    }
+    .modal-content .info-item i {
+      color: #d4a017;
+      width: 24px;
+      height: 24px;
+    }
+    body.light-mode .modal-content .info-item i {
+      color: #d4a017;
+    }
+    .modal-content .buttons-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .modal-content button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    .modal-content .confirm {
+      background: linear-gradient(135deg, #d4a017, #e5b62a);
+      color: #1C2526;
+    }
+    .modal-content .confirm:hover, .modal-content .confirm:focus {
+      background: linear-gradient(135deg, #e5b62a, #d4a017);
+      transform: translateY(-2px);
+    }
+    .modal-content .cancel {
+      background: linear-gradient(135deg, #FF6F61, #ff867a);
+      color: #FFF;
+    }
+    .modal-content .cancel:hover, .modal-content .cancel:focus {
+      background: linear-gradient(135deg, #ff867a, #FF6F61);
+      transform: translateY(-2px);
+    }
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+      p {
+        font-size: 1rem;
+      }
+      .buttons a {
+        font-size: 1rem;
+        padding: 12px;
+      }
+      .buttons a .emoji-box {
+        width: 36px;
+        height: 36px;
+        font-size: 1.1em;
+      }
+      .location-map {
+        max-width: 300px;
+      }
+      .location-map iframe {
+        height: 225px;
+      }
+      .modal-content {
+        max-width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="profile-image">
+      <img src="img/logo.png" alt="Logo da Batata do Sertão, uma batata frita estilizada">
+    </div>
+    <h1>🍟 BEM-VINDO AO SABOR DO SERTÃO!</h1>
+    <p>Clique abaixo e peça sua batata <span class="highlight">arretada</span>!</p>
+    <div class="buttons">
+      <a href="#" class="whatsapp-link" data-url="https://wa.me/5589981098332?text=Oi%2C%20quero%20pedir%20minha%20Batata%20do%20Sert%C3%A3o%20%F0%9F%8D%9F🔥" aria-label="Fazer pedido no WhatsApp">
+        <span class="emoji-box">🛒</span>
+        <span class="text">FAZER PEDIDO NO WHATSAPP</span>
+      </a>
+      <a href="cardapio.html" aria-label="Ver cardápio completo">
+        <span class="emoji-box">📋</span>
+        <span class="text">VER CARDÁPIO COMPLETO</span>
+      </a>
+      <a href="#" class="delivery-link" aria-label="Taxa de entrega e regiões atendidas">
+        <span class="emoji-box">📦</span>
+        <span class="text">TAXA DE ENTREGA & REGIÕES</span>
+      </a>
+      <a href="#" class="schedule-link" aria-label="Horários de funcionamento">
+        <span class="emoji-box">⏰</span>
+        <span class="text">HORÁRIOS DE FUNCIONAMENTO</span>
+      </a>
+    </div>
+    <div class="location-map">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2488.1234567890123!2d-42.699999!3d-9.009999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTAqMDDCsDAwIlMzOSQwMCJXIjE!5e0!3m2!1spt-BR!2sbr!4v1623456789!5m2!1spt-BR!2sbr" width="400" height="300" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+      <p class="location-address"><strong>Endereço:</strong> Praça do Abrantes, São Raimundo Nonato - PI</p>
+    </div>
+    <div class="toggle-container">
+      <label class="switch">
+        <input type="checkbox" id="darkModeToggle" aria-label="Alternar entre modo escuro e claro">
+        <span class="slider"></span>
+      </label>
+      <span>Modo Escuro</span>
+    </div>
+  </div>
+
+  <div id="whatsappModal" class="modal">
+    <div class="modal-content">
+      <h2><i data-lucide="message-circle"></i> Fazer Pedido</h2>
+      <div class="info-item">
+        <i data-lucide="info"></i>
+        <span>Você será redirecionado para o WhatsApp e atendido por <span class="highlight">Pedro Henrique</span>.</span>
+      </div>
+      <div class="buttons-container">
+        <button class="confirm" onclick="proceedToWhatsApp()"><i data-lucide="check"></i> Confirmar</button>
+        <button class="cancel" onclick="closeModal('whatsappModal')"><i data-lucide="x"></i> Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="deliveryModal" class="modal">
+    <div class="modal-content">
+      <h2><i data-lucide="truck"></i> Taxa de Entrega & Regiões</h2>
+      <div class="info-item">
+        <i data-lucide="dollar-sign"></i>
+        <span><strong>Taxa:</strong> R$ 5,00 (grátis acima de R$ 50,00)</span>
+      </div>
+      <div class="info-item">
+        <i data-lucide="map-pin"></i>
+        <span><strong>Regiões Atendidas:</strong> São Raimundo Nonato - PI e arredores (raio de 10km)</span>
+      </div>
+      <div class="info-item">
+        <i data-lucide="clock"></i>
+        <span><strong>Horários:</strong> 18h às 23h, de segunda a sábado</span>
+      </div>
+      <div class="buttons-container">
+        <button class="confirm" onclick="closeModal('deliveryModal')"><i data-lucide="x"></i> Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="scheduleModal" class="modal">
+    <div class="modal-content">
+      <h2><i data-lucide="clock"></i> Horários de Funcionamento</h2>
+      <div class="info-item">
+        <i data-lucide="calendar"></i>
+        <span><strong>Dias:</strong> Segunda a Sábado</span>
+      </div>
+      <div class="info-item">
+        <i data-lucide="clock"></i>
+        <span><strong>Horário:</strong> 18h às 23h</span>
+      </div>
+      <div class="buttons-container">
+        <button class="confirm" onclick="closeModal('scheduleModal')"><i data-lucide="x"></i> Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Inicializar Lucide Icons
+    lucide.createIcons();
+
+    // Função para gerenciar o dark mode com localStorage e URL
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const urlParams = new URLSearchParams(window.location.search);
+    const isDarkMode = urlParams.get('darkMode') === 'true' || localStorage.getItem('darkMode') === 'true';
+    darkModeToggle.checked = isDarkMode;
+    if (!isDarkMode) {
+      document.body.classList.add('light-mode');
+    }
+
+    darkModeToggle.addEventListener('change', function() {
+      const isDark = this.checked;
+      localStorage.setItem('darkMode', isDark);
+      document.body.classList.toggle('light-mode', !isDark);
+
+      // Atualiza os links para passar o parâmetro de dark mode
+      document.querySelectorAll('.buttons a:not(.whatsapp-link)').forEach(link => {
+        const url = new URL(link.href);
+        url.searchParams.set('darkMode', isDark);
+        link.href = url.toString();
+      });
+
+      // Atualiza o parâmetro darkMode na URL atual
+      const url = new URL(window.location);
+      url.searchParams.set('darkMode', isDark);
+      window.history.pushState({}, '', url);
+    });
+
+    // Aplica dark mode nos links ao carregar a página
+    document.querySelectorAll('.buttons a:not(.whatsapp-link)').forEach(link => {
+      const url = new URL(link.href);
+      url.searchParams.set('darkMode', isDarkMode);
+      link.href = url.toString();
+    });
+
+    // Função para abrir modais com animação
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      const modalContent = modal.querySelector('.modal-content');
+      modal.style.display = 'flex';
+      setTimeout(() => {
+        modal.classList.add('show');
+        modalContent.classList.add('show');
+      }, 10);
+    }
+
+    // Função para fechar modais com animação
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      const modalContent = modal.querySelector('.modal-content');
+      modal.classList.remove('show');
+      modalContent.classList.remove('show');
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 300);
+    }
+
+    // Lógica do modal para o WhatsApp
+    let whatsappUrl = '';
+    const whatsappModal = document.getElementById('whatsappModal');
+    document.querySelectorAll('.whatsapp-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        whatsappUrl = this.getAttribute('data-url');
+        openModal('whatsappModal');
+      });
+    });
+
+    // Lógica do modal para Taxa de Entrega
+    const deliveryModal = document.getElementById('deliveryModal');
+    document.querySelectorAll('.delivery-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        openModal('deliveryModal');
+      });
+    });
+
+    // Lógica do modal para Horários de Funcionamento
+    const scheduleModal = document.getElementById('scheduleModal');
+    document.querySelectorAll('.schedule-link').forEach(link => {
+      link.addEventListener('click', function(e) {
+        e.preventDefault();
+        openModal('scheduleModal');
+      });
+    });
+
+    function proceedToWhatsApp() {
+      window.location.href = whatsappUrl;
+    }
+
+    // Fechar modais ao clicar fora
+    document.getElementById('whatsappModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal('whatsappModal');
+      }
+    });
+
+    document.getElementById('deliveryModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal('deliveryModal');
+      }
+    });
+
+    document.getElementById('scheduleModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal('scheduleModal');
+      }
+    });
+
+    // Fechar modais com tecla Esc
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        if (whatsappModal.style.display === 'flex') {
+          closeModal('whatsappModal');
+        }
+        if (deliveryModal.style.display === 'flex') {
+          closeModal('deliveryModal');
+        }
+        if (scheduleModal.style.display === 'flex') {
+          closeModal('scheduleModal');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

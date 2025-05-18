@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cardápio - Batata do Sertão</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      background-color: #1C2526;
+      color: #E0E0E0;
+      font-family: 'Roboto', Arial, sans-serif;
+      text-align: center;
+      transition: all 0.4s ease;
+    }
+    body.light-mode {
+      background-color: #F5F5F5;
+      color: #333;
+    }
+    .container {
+      padding: 30px 15px;
+      width: 100%;
+      max-width: 600px;
+    }
+    .header {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    .back-button {
+      position: absolute;
+      left: 15px;
+      top: 10px;
+      color: #d4a017;
+      text-decoration: none;
+      font-size: 1rem;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+    .back-button:hover, .back-button:focus {
+      color: #e5b62a;
+    }
+    .profile-image img {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid #d4a017;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      margin: 20px 0;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin: 15px 0;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+      color: #F5E050;
+    }
+    .menu-item {
+      background-color: #333;
+      border: 1px solid #d4a017;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: left;
+      font-size: 1.1rem;
+      transition: background-color 0.3s, transform 0.2s;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .menu-item:hover, .menu-item:focus {
+      background-color: #444;
+      transform: scale(1.02);
+      outline: 2px solid #d4a017;
+    }
+    .menu-item img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .menu-item .price {
+      color: #28A745;
+      font-weight: bold;
+      float: right;
+    }
+    body.light-mode .menu-item .price {
+      color: #218838;
+    }
+    .menu-item .badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: #28A745; /* Verde no modo escuro */
+      color: #FFF;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 0.9em;
+      font-weight: bold;
+    }
+    body.light-mode .menu-item .badge {
+      background-color: #218838; /* Verde mais escuro no modo claro */
+    }
+    .quantity-selector {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .quantity-selector button {
+      width: 30px;
+      height: 30px;
+      background-color: #d4a017;
+      color: #1C2526;
+      border: none;
+      border-radius: 5px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .quantity-selector button:hover, .quantity-selector button:focus {
+      background-color: #e5b62a;
+    }
+    .quantity-selector input {
+      width: 50px;
+      padding: 5px;
+      border-radius: 5px;
+      border: 1px solid #d4a017;
+      background-color: #444;
+      color: #E0E0E0;
+      text-align: center;
+    }
+    .order-button {
+      display: block;
+      padding: 10px;
+      background-color: #d4a017;
+      color: #1C2526;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 1em;
+      font-weight: bold;
+      text-align: center;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    .order-button:hover, .order-button:focus {
+      background-color: #e5b62a;
+      transform: scale(1.02);
+      outline: 2px solid #FFF;
+    }
+    .toggle-container {
+      margin-top: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "🌙";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    input:checked + .slider {
+      background-color: #d4a017;
+    }
+    input:checked + .slider:before {
+      transform: translateX(26px);
+      content: "☀️";
+    }
+    body.light-mode .menu-item {
+      background-color: #E0E0E0;
+      color: #333;
+    }
+    body.light-mode .menu-item:hover, body.light-mode .menu-item:focus {
+      background-color: #D0D0D0;
+    }
+    body.light-mode .order-button {
+      background-color: #d4a017;
+      color: #1C2526;
+    }
+    body.light-mode .order-button:hover, body.light-mode .order-button:focus {
+      background-color: #e5b62a;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background-color: #333;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 400px;
+      color: #E0E0E0;
+      border: 2px solid #d4a017;
+      position: relative;
+    }
+    body.light-mode .modal-content {
+      background-color: #F5F5F5;
+      color: #333;
+    }
+    .modal-content img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 5px;
+      margin-bottom: 15px;
+    }
+    .modal-content .close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.5em;
+      cursor: pointer;
+      color: #FF6F61;
+    }
+    .confirm-modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .confirm-button, .cancel-button {
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .confirm-button {
+      background-color: #d4a017;
+      color: #1C2526;
+    }
+    .confirm-button:hover, .confirm-button:focus {
+      background-color: #e5b62a;
+    }
+    .cancel-button {
+      background-color: #FF6F61;
+      color: #FFF;
+    }
+    .cancel-button:hover, .cancel-button:focus {
+      background-color: #ff867a;
+    }
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+      .menu-item {
+        font-size: 1rem;
+        padding: 12px;
+      }
+      .menu-item img {
+        height: 120px;
+      }
+      .order-button {
+        font-size: 0.9rem;
+        padding: 8px;
+      }
+      .modal-content {
+        max-width: 90%;
+      }
+      .modal-content img {
+        height: 150px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <a href="index.html" class="back-button">← Voltar</a>
+      <div class="profile-image">
+        <img src="img/logo.png" alt="Logo da Batata do Sertão, uma batata frita estilizada">
+      </div>
+      <h1>🍟 CARDÁPIO - BATATA DO SERTÃO</h1>
+    </div>
+    <div class="menu" id="menu"></div>
+    <div class="toggle-container">
+      <label class="switch">
+        <input type="checkbox" id="darkModeToggle">
+        <span class="slider"></span>
+      </label>
+      <span>Modo Escuro</span>
+    </div>
+  </div>
+
+  <div id="ingredientModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">×</span>
+      <img id="modalImage" src="" alt="Porção completa do item">
+      <h2 id="modalTitle"></h2>
+      <p id="modalIngredients"></p>
+    </div>
+  </div>
+
+  <div id="confirmModal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeConfirmModal()">×</span>
+      <h2>Confirmar Pedido</h2>
+      <p>Você será redirecionado para falar com Pedro Henrique no WhatsApp para confirmar seu pedido.</p>
+      <div class="confirm-modal-buttons">
+        <button class="confirm-button" onclick="proceedToWhatsApp()">Confirmar</button>
+        <button class="cancel-button" onclick="closeConfirmModal()">Cancelar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Array com os dados dos itens do cardápio
+    const menuItems = [
+      {
+        id: 'qty-1',
+        name: 'Batata Clássica',
+        imageUrl: 'https://i.pinimg.com/736x/95/db/17/95db17679c9ff27dc248d3e68b3717e2.jpg',
+        alt: 'Batata frita clássica com sal e tempero',
+        description: 'Batata frita com sal, pimenta e tempero especial do sertão.',
+        price: 'R$ 15,00',
+        badge: 'Mais Vendido'
+      },
+      {
+        id: 'qty-2',
+        name: 'Batata com Carne de Sol',
+        imageUrl: 'https://i.pinimg.com/736x/09/c6/f9/09c6f96c44954479e64483cf4c0e9a06.jpg',
+        alt: 'Batata frita com carne de sol desfiada e molho especial',
+        description: 'Batata frita com carne de sol desfiada, molho especial e cebola crocante.',
+        price: 'R$ 25,00',
+        badge: 'Top Escolha'
+      },
+      {
+        id: 'qty-3',
+        name: 'Batata com Queijo Coalho',
+        imageUrl: 'https://i.pinimg.com/736x/37/06/ab/3706ab54d4399eff88bf30c11826f573.jpg',
+        alt: 'Batata frita com cubos de queijo coalho derretido',
+        description: 'Batata frita com cubos de queijo coalho derretido e toque de orégano.',
+        price: 'R$ 20,00',
+        badge: ''
+      },
+      {
+        id: 'qty-4',
+        name: 'Batata Picante Sertaneja',
+        imageUrl: 'https://i.pinimg.com/736x/58/b1/a5/58b1a53af1d150d879cd77305487d5da.jpg',
+        alt: 'Batata frita com molho picante e tempero sertanejo',
+        description: 'Batata frita com molho picante, pimenta malagueta e tempero sertanejo.',
+        price: 'R$ 22,00',
+        badge: 'Disponível Hoje!'
+      },
+      {
+        id: 'qty-5',
+        name: 'Combo Família (2 Batatas + Bebida)',
+        imageUrl: 'https://i.pinimg.com/736x/dd/37/81/dd37817c5816dd03cc753d610396c7fb.jpg',
+        alt: 'Duas batatas fritas com bebida para a família',
+        description: 'Duas batatas fritas clássicas + 1 litro de refrigerante.',
+        price: 'R$ 45,00',
+        badge: ''
+      }
+    ];
+
+    // Gerar o menu dinamicamente
+    function generateMenu() {
+      const menuContainer = document.getElementById('menu');
+      menuItems.forEach(item => {
+        const menuItem = document.createElement('div');
+        menuItem.className = 'menu-item';
+        menuItem.tabIndex = 0;
+        menuItem.setAttribute('aria-label', `${item.name}, ${item.price}`);
+
+        menuItem.innerHTML = `
+          <img src="${item.imageUrl}" alt="${item.alt}" onclick="showModal('${item.name}', '${item.imageUrl}', '${item.description}')">
+          ${item.badge ? `<div class="badge">${item.badge}</div>` : ''}
+          ${item.name} <span class="price">${item.price}</span>
+          <div class="quantity-selector">
+            <label for="${item.id}">Quantidade:</label>
+            <button type="button" onclick="changeQuantity('${item.id}', -1)">-</button>
+            <input type="number" id="${item.id}" min="1" value="1" aria-label="Quantidade de ${item.name}">
+            <button type="button" onclick="changeQuantity('${item.id}', 1)">+</button>
+            <a href="#" class="order-button" onclick="showConfirmModal('${item.name}', document.getElementById('${item.id}').value); return false;" aria-label="Pedir ${item.name}">Pedir Agora</a>
+          </div>
+        `;
+
+        menuContainer.appendChild(menuItem);
+      });
+    }
+
+    // Chamar a função para gerar o menu ao carregar a página
+    window.onload = generateMenu;
+
+    // Gerenciar dark mode com localStorage
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const urlParams = new URLSearchParams(window.location.search);
+    const isDarkMode = urlParams.get('darkMode') === 'true' || localStorage.getItem('darkMode') === 'true';
+    darkModeToggle.checked = isDarkMode;
+    if (!isDarkMode) {
+      document.body.classList.add('light-mode');
+    }
+
+    darkModeToggle.addEventListener('change', function() {
+      const isDark = this.checked;
+      localStorage.setItem('darkMode', isDark);
+      document.body.classList.toggle('light-mode', !isDark);
+      const url = new URL(window.location);
+      url.searchParams.set('darkMode', isDark);
+      window.history.pushState({}, '', url);
+    });
+
+    // Modal de ingredientes
+    function showModal(title, imageUrl, ingredients) {
+      const modalImage = document.getElementById('modalImage');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalIngredients = document.getElementById('modalIngredients');
+      const ingredientModal = document.getElementById('ingredientModal');
+
+      modalImage.src = '';
+      modalImage.onerror = () => {
+        console.error('Erro ao carregar a imagem:', imageUrl);
+        modalImage.src = 'https://via.placeholder.com/400x200?text=Imagem+Indisponível';
+        modalImage.alt = 'Imagem indisponível';
+      };
+      modalImage.src = imageUrl;
+      modalImage.alt = `Porção completa de ${title}`;
+
+      modalTitle.textContent = title;
+      modalIngredients.textContent = ingredients;
+      ingredientModal.style.display = 'flex';
+
+      console.log('Modal aberto com imagem:', imageUrl);
+    }
+
+    function closeModal() {
+      document.getElementById('ingredientModal').style.display = 'none';
+    }
+
+    // Modal de confirmação
+    let currentItem = '';
+    let currentQuantity = 0;
+
+    function showConfirmModal(item, quantity) {
+      currentItem = item;
+      currentQuantity = quantity;
+      document.getElementById('confirmModal').style.display = 'flex';
+    }
+
+    function closeConfirmModal() {
+      document.getElementById('confirmModal').style.display = 'none';
+    }
+
+    function proceedToWhatsApp() {
+      const message = `Oi, quero pedir ${currentQuantity} ${currentItem}! 🍟`;
+      const encodedMessage = encodeURIComponent(message);
+      window.location.href = `https://wa.me/5589981098332?text=${encodedMessage}`;
+    }
+
+    // Controlar quantidade
+    function changeQuantity(inputId, change) {
+      const input = document.getElementById(inputId);
+      let value = parseInt(input.value) + change;
+      if (value < 1) value = 1;
+      input.value = value;
+    }
+
+    // Fechar modais com tecla Esc ou clique fora
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        if (document.getElementById('ingredientModal').style.display === 'flex') {
+          closeModal();
+        }
+        if (document.getElementById('confirmModal').style.display === 'flex') {
+          closeConfirmModal();
+        }
+      }
+    });
+
+    // Fechar modais ao clicar fora
+    document.getElementById('ingredientModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+
+    document.getElementById('confirmModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeConfirmModal();
+      }
+    });
+  </script>
+</body>
+</html>
